@@ -1,0 +1,36 @@
+/* *{
+    font-family: robotto;
+}
+
+body{
+    background-color: rgb(81, 81, 177) !important;
+
+}
+
+.container{
+    border: 2px solid none;
+    height: 70vh;
+    width: 50vw !important;
+    background-color: rgb(131, 131, 216);
+    border-radius: 30px;
+    margin-top: 100px;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.btn{
+    background-color: rgb(81, 81, 177) !important;
+    color: white !important;
+    
+    
+}
+#button{
+    display: flex;
+    justify-content: center;
+}
+
+.error{
+    border: 2px solid rgba(255, 0, 0, 0.615) !important;
+} */
