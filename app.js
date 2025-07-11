@@ -4,7 +4,6 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const { createClient } = supabase
 const client = createClient(supabaseUrl, supabaseKey)
 
-
 // Sign Up 
 
 const signUpBtn = document.getElementById("signupBtn")
@@ -13,9 +12,11 @@ const signUpPassword = document.getElementById("password")
 const firstName = document.getElementById("fName")
 const lastName = document.getElementById("lName")
 const terms = document.getElementById("terms")
-const signupWithGoogle = document.getElementById("signupWithGoogle")
-console.log(signupWithGoogle);
 
+
+// signupWithGoogle.addEventListener("click", function(){
+
+// })
 
 signUpBtn && signUpBtn.addEventListener("click", async function () {
     if (signUpEmail.value && signUpPassword.value && firstName.value && lastName.value && terms.checked) {
@@ -65,7 +66,7 @@ loginBtn && loginBtn.addEventListener("click", async function () {
     if (loginEmail.value && loginPass.value) {
 
         try {
-            const { data, error } = await client.auth.signUp({
+            const { data, error } = await client.auth.signInWithPassword({
                 email: loginEmail.value,
                 password: loginPass.value
             })
@@ -94,7 +95,10 @@ loginBtn && loginBtn.addEventListener("click", async function () {
     }
 })
 
-// // client Id
-// 1015843102799-fg379cniuqsmt314i6ll0uimtdk2hhqe.apps.googleusercontent.com
-// // client secret
-// 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
+const loginWithGoogle = document.getElementById("signupWithGoogle")
+loginWithGoogle.addEventListener("click", async () => {
+    const { data, error }= await client.auth.signInWithOAuth({
+        provider: 'google',
+    })
+    console.log(data)
+})
