@@ -4,7 +4,6 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const { createClient } = supabase
 const client = createClient(supabaseUrl, supabaseKey)
 
-
 // Sign Up 
 
 const signUpBtn = document.getElementById("signupBtn")
@@ -13,6 +12,7 @@ const signUpPassword = document.getElementById("password")
 const firstName = document.getElementById("fName")
 const lastName = document.getElementById("lName")
 const terms = document.getElementById("terms")
+
 
 signUpBtn && signUpBtn.addEventListener("click", async function () {
     if (!signUpEmail.value && !signUpPassword.value && !firstName.value && !lastName.value && !terms.checked) {
@@ -95,6 +95,7 @@ signUpBtn && signUpBtn.addEventListener("click", async function () {
     }
 })
 
+
 const closeEye = document.getElementById("closeEye")
 closeEye.addEventListener("click", () => {
     if (signUpPassword.type === "password") {
@@ -106,7 +107,8 @@ closeEye.addEventListener("click", () => {
         closeEye.classList.remove("fa-eye");
         closeEye.classList.add("fa-eye-slash");
     }
-});
+})
+
 
 // Login with Google
 
@@ -131,4 +133,3 @@ console.log(directLogin);
 directLogin.addEventListener("click", () => {
     window.location.href = "login.html"
 })
-
