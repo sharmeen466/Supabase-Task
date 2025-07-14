@@ -13,11 +13,56 @@ const signUpPassword = document.getElementById("password")
 const firstName = document.getElementById("fName")
 const lastName = document.getElementById("lName")
 const terms = document.getElementById("terms")
-const signupWithGoogle = document.getElementById("signupWithGoogle")
-console.log(signupWithGoogle);
-
 
 signUpBtn && signUpBtn.addEventListener("click", async function () {
+    if (!signUpEmail.value && !signUpPassword.value && !firstName.value && !lastName.value && !terms.checked) {
+        Swal.fire({
+            position: "top",
+            icon: "error",
+            text: "Please fill all the Fields",
+        });
+    }
+    else {
+        if (!signUpEmail.value.includes("@gmail.com")) {
+            signUpEmail.classList.add("error")
+            Swal.fire({
+                position: "top",
+                text: "'@gmail.com' is missing",
+            });
+        }
+
+        else {
+            signUpEmail.classList.remove("error")
+
+        }
+        if (!signUpPassword.value) {
+            signUpPassword.classList.add("error")
+        }
+        else {
+            signUpPassword.classList.remove("error")
+
+        }
+        if (!firstName.value) {
+            firstName.classList.add("error")
+        }
+        else {
+            firstName.classList.remove("error")
+        }
+        if (!lastName.value) {
+            lastName.classList.add("error")
+        }
+        else {
+            lastName.classList.remove("error")
+        }
+        if (!terms.checked) {
+            Swal.fire({
+                position: "top",
+                text: "Please Accept our T&C",
+            });
+        }
+
+    }
+
     if (signUpEmail.value && signUpPassword.value && firstName.value && lastName.value && terms.checked) {
 
         try {
@@ -50,51 +95,40 @@ signUpBtn && signUpBtn.addEventListener("click", async function () {
     }
 })
 
-//  Log In
-
-const loginBtn = document.getElementById("loginBtn")
-const loginEmail = document.getElementById("loginEmail")
-const loginPass = document.getElementById("loginPass")
-
-console.log(loginBtn);
-console.log(loginEmail);
-console.log(loginPass);
-
-
-loginBtn && loginBtn.addEventListener("click", async function () {
-    if (loginEmail.value && loginPass.value) {
-
-        try {
-            const { data, error } = await client.auth.signUp({
-                email: loginEmail.value,
-                password: loginPass.value
-            })
-            if (error) {
-                console.log(error.message)
-            }
-            else {
-                console.log(data)
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Succesfully Login",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-            // navigate to home page
-            setTimeout(() => {
-                window.location.href = "home.html"
-            }, 2000);
-        }
-
-        catch (error) {
-            console.log(error.message);
-        }
+const closeEye = document.getElementById("closeEye")
+closeEye.addEventListener("click", () => {
+    if (signUpPassword.type === "password") {
+        signUpPassword.type = "text";
+        closeEye.classList.remove("fa-eye-slash");
+        closeEye.classList.add("fa-eye");
+    } else {
+        signUpPassword.type = "password";
+        closeEye.classList.remove("fa-eye");
+        closeEye.classList.add("fa-eye-slash");
     }
+});
+
+// Login with Google
+
+const loginWithGoogle = document.getElementById("signupWithGoogle")
+
+loginWithGoogle.addEventListener("click", async () => {
+    const { error } = await client.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+            redirectTo: window.location.origin + '/post.html',
+            queryParams: { access_type: 'offline', prompt: 'consent' },
+        },
+    })
+    console.log(error)
 })
 
-// // client Id
-// 1015843102799-fg379cniuqsmt314i6ll0uimtdk2hhqe.apps.googleusercontent.com
-// // client secret
-// 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
+
+// navigate to Login Page
+
+const directLogin = document.getElementById("directLogin")
+console.log(directLogin);
+directLogin.addEventListener("click", () => {
+    window.location.href = "login.html"
+})
+

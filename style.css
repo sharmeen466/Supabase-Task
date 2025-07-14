@@ -1,36 +1,122 @@
-/* *{
-    font-family: robotto;
+body {
+    font-family: poppins;
 }
 
-body{
-    background-color: rgb(81, 81, 177) !important;
-
+.error {
+    border: 2px solid rgb(121, 3, 3) !important;
 }
 
-.container{
-    border: 2px solid none;
-    height: 70vh;
-    width: 50vw !important;
-    background-color: rgb(131, 131, 216);
-    border-radius: 30px;
-    margin-top: 100px;
+#createPost {
+    margin: 80px 50px;
 }
-form{
+
+#file_input {
+    padding: 20px;
+}
+
+#postBtn {
+    margin-top: 30px;
+    padding: 6px 40px;
+    font-size: 1.3rem;
+}
+
+.margin {
+    margin-bottom: 5px;
+}
+
+#postContainer {
     display: flex;
     flex-direction: column;
     justify-content: center;
-}
-.btn{
-    background-color: rgb(81, 81, 177) !important;
-    color: white !important;
-    
-    
-}
-#button{
-    display: flex;
-    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
 }
 
-.error{
-    border: 2px solid rgba(255, 0, 0, 0.615) !important;
-} */
+#postContainer h2 {
+    font-size: 3rem !important;
+    font-weight: 600;
+    text-align: center;
+    text-transform: uppercase
+}
+
+#postContainer p {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#postContainer img {
+    margin: auto;
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.poststyling {
+    margin-bottom: 50px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 2px 3px 30px 5px #403e3e;
+    width: 70vw;
+    padding: 7px 10px;
+    background-color: #e7e3e3
+}
+
+.deleteBtn {
+    outline: none;
+    padding: 5px 15px;
+    background-color: #050f28;
+    color: white;
+    border-radius: 10px;
+    box-shadow: 1px 1px 8px 2px #222121;
+    margin-bottom: 5px;
+}
+
+.pswrd {
+    display: flex;
+    align-items: center;
+}
+
+.closeEye {
+    padding: 13px 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    cursor: pointer;
+}
+
+.closeEye:hover {
+    background-color: #41444d;
+}
+
+#password {
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+/* Media Queries */
+@media screen and (max-width: 500px) {
+    #createPost {
+        margin: 60px 20px;
+    }
+
+    #postContainer h2 {
+        font-size: 1.5rem !important;
+    }
+
+    #postContainer p {
+        font-size: 0.85rem;
+    }
+
+    .poststyling {
+        width: 85vw;
+        padding: 5px 10px;
+    }
+
+    #postContainer img {
+        height: 30vh !important;
+    }
+
+    .deleteBtn {
+        padding: 4px 10px;
+        font-size: 0.8rem;
+    }
+
+}
