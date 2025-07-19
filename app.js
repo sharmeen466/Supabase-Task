@@ -97,7 +97,7 @@ signUpBtn && signUpBtn.addEventListener("click", async function () {
 
 
 const closeEye = document.getElementById("closeEye")
-closeEye.addEventListener("click", () => {
+closeEye && closeEye.addEventListener("click", () => {
     if (signUpPassword.type === "password") {
         signUpPassword.type = "text";
         closeEye.classList.remove("fa-eye-slash");
@@ -109,27 +109,301 @@ closeEye.addEventListener("click", () => {
     }
 })
 
+// Log in
+
+const loginBtn = document.getElementById("loginBtn")
+const loginEmail = document.getElementById("loginEmail")
+const loginPass = document.getElementById("loginPass")
+
+loginBtn && loginBtn.addEventListener("click", async function () {
+    if (loginEmail.value && loginPass.value) {
+
+        try {
+            const { data, error } = await client.auth.signInWithPassword({
+                email: loginEmail.value,
+                password: loginPass.value
+            })
+            console.log(data);
+
+            if (error) {
+                console.log(error.message)
+                Swal.fire({
+                    icon: "error",
+                    // title: "Oops...",
+                    text: "Invalid Login Credentials",
+                    footer: '<a href="#">Why do I have this issue?</a>'
+                });
+            }
+            else {
+                console.log(data)
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Succesfully Login",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                // navigate to home page
+                setTimeout(() => {
+                    window.location.href = "home.html"
+                }, 2000);
+            }
+        }
+        catch (error) {
+            console.log(error.message);
+        }
+    }
+})
+
 
 // Login with Google
 
 const loginWithGoogle = document.getElementById("signupWithGoogle")
-
-loginWithGoogle.addEventListener("click", async () => {
-    const { error } = await client.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-            redirectTo: window.location.origin + '/post.html',
-            queryParams: { access_type: 'offline', prompt: 'consent' },
-        },
+loginWithGoogle &&
+    loginWithGoogle.addEventListener("click", async () => {
+        const { error } = await client.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + '/home.html',
+                queryParams: { access_type: 'offline', prompt: 'consent' },
+            },
+        })
+        console.log(error)
     })
-    console.log(error)
-})
 
 
 // navigate to Login Page
 
 const directLogin = document.getElementById("directLogin")
-console.log(directLogin);
-directLogin.addEventListener("click", () => {
-    window.location.href = "login.html"
+directLogin &&
+    directLogin.addEventListener("click", () => {
+        window.location.href = "login.html"
+    })
+
+// Log Out
+
+const logOutBtn = document.getElementById("logOutBtn")
+logOutBtn && logOutBtn.addEventListener("click", async () => {
+    await client.auth.signOut();
+    window.location.href = "index.html"
 })
+
+
+// create user in navbar
+
+async function displayUserProfile() {
+    try {
+        const {
+            data: { user },
+            error,
+        } = await client.auth.getUser();
+
+        if (error) throw error;
+
+        console.log(user);
+
+        if (user) {
+            // 👇 get DOM elements first
+            const profileAvatar = document.getElementById('profile-avatar');
+            const fullName = document.getElementById('profile-name');
+            const emailElement = document.getElementById('profile-email');
+            // 👇 update values if elements exist
+            if (profileAvatar) {
+                profileAvatar.src =
+                    user.user_metadata?.avatar_url || 'blank-profile-picture-973460_960_720.webp';
+            }
+
+            if (fullName) {
+                fullName.textContent = user.user_metadata?.full_name;
+            }
+
+            if (emailElement) {
+                emailElement.textContent = user.email || '';
+            }
+
+            // 👇 Redirect to post.html if logged in and on index.html
+            if (window.location.pathname.includes('index.html')) {
+                window.location.href = 'post.html';
+            }
+        } else if (
+            !window.location.pathname.includes('index.html') &&
+            !window.location.pathname.includes('login.html')
+        ) {
+            window.location.href = 'index.html';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        if (
+            !window.location.pathname.includes('index.html') &&
+            !window.location.pathname.includes('login.html')
+        ) {
+            window.location.href = 'index.html';
+        }
+    }
+}
+displayUserProfile()
+
+//Add a post
+
+const uplaodImage = document.getElementById("file_input")
+const postBtn = document.getElementById("postBtn")
+
+postBtn && postBtn.addEventListener("click", async () => {
+    const { data: { user } } = await client.auth.getUser()
+    const userTitle = document.getElementById("website-admin").value
+    const userDescription = document.getElementById("message").value
+
+    if (!userTitle && !userDescription) {
+        Swal.fire({
+            icon: "error",
+            title: "",
+            text: "Please enter title & description",
+        });
+        return;
+    }
+    else if (!userTitle) {
+        Swal.fire({
+            icon: "error",
+            title: "",
+            text: "Title is required — please fill it in.",
+        });
+        return;
+    }
+    else if (!userDescription) {
+        Swal.fire({
+            icon: "error",
+            title: "",
+            text: "Please enter a description before posting.",
+        });
+        return;
+    }
+    // else if(uplaodImage){
+    //         const img = document.createElement("img");
+    //         img.src = uplaodImage.image;
+    //     }
+
+
+    else {
+
+        Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Post Created Successfully",
+            showConfirmButton: false,
+            timer: 1500
+        });
+        const postContainer = document.getElementById("postContainer")
+        postContainer.innerHTML += `<div class="poststyling margin">
+                   <h2>${userTitle}</h2>
+                   <p>${userDescription}</p>
+                   </div>`
+        document.getElementById("website-admin").value = ""
+        document.getElementById("message").value = ""
+    }
+    console.log(user.id);
+    const { data, error } = await client.from("posts").insert([
+        {
+            userId: user.id,
+            title: userTitle,
+            description: userDescription,
+        },
+    ])
+    if (data) {
+        console.log(data);
+
+    }
+    else {
+        console.log(error);
+
+    }
+})
+
+// Read all posts
+
+if (window.location.pathname == "/myposts.html") {
+    console.log("mypost");
+
+
+    try {
+        const readAllPosts = async () => {
+            const { data, error } = await client.from("posts").select()
+            console.log("Data from SupaBase: ", data);
+
+            if (data) {
+                console.log(data);
+
+                const postBox = document.getElementById("postBox")
+                console.log(postBox)
+                postBox.innerHTML = data.map(
+                    ({ id, title, description }) => `<div id = '${id}' class = 'mypost-margin'> 
+                <div class="max-w-sm rounded overflow-hidden shadow-lg poststyling removeDiv">
+                
+                 <div class="relative inline-block text-left">
+               <button id="menuButton" type="button" class="p-2 rounded-full hover:bg-gray-200 focus:outline-none">
+               <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+      </svg>
+               </button>
+
+              <div id="menuDropdown" class="hidden relative right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+              <div class="py-1 text-sm text-gray-700">
+              <button class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
+             <button class=" dlteBtn block w-full text-left px-4 py-2 hover:bg-gray-100">Delete</button>
+    </div>
+  </div>
+  </div>
+                <div class="px-6 py-4">
+                <div class="font-bold text-xl mb-2">${title}</div>
+                <p class="text-gray-700 text-base">${description}
+                </p>
+                </div>
+                <div class="px-6 pt-4 pb-2">
+                <img class="w-full" src="" alt="">
+                </div>
+</div>`
+
+ ).join('')
+ 
+ const menuButton = document.getElementById("menuButton")
+    console.log(menuButton);
+    menuButton && menuButton.addEventListener("click", () => {
+        const menuDropdown = document.getElementById("menuDropdown")
+        console.log(menuDropdown);
+        menuDropdown.classList.toggle("hidden")
+        const dlteBtn = document.getElementsByClassName("dlteBtn")
+        for(let i = 0; i < dlteBtn.length; i++){
+            dlteBtn[i].addEventListener("click", () => {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You want to Delete this post!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your Post has been deleted.",
+                            icon: "success"
+                        });
+                        dlteBtn[i].closest(".removeDiv").remove();
+                    }
+                });
+            })
+
+        }
+    })
+            } else {
+                console.log(error);
+
+            }
+        }
+        readAllPosts()
+    }
+    catch (error) {
+        console.log(error);
+    }
+    
+}

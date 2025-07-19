@@ -23,6 +23,10 @@ body {
 .margin {
     margin-bottom: 5px;
 }
+#box{
+    display: flex;
+    justify-content: flex-end;
+}
 
 #postContainer {
     display: flex;
@@ -33,7 +37,7 @@ body {
 }
 
 #postContainer h2 {
-    font-size: 3rem !important;
+    font-size: 2rem !important;
     font-weight: 600;
     text-align: center;
     text-transform: uppercase
@@ -54,10 +58,10 @@ body {
     margin-bottom: 50px;
     border: none;
     border-radius: 10px;
-    box-shadow: 2px 3px 30px 5px #403e3e;
+    box-shadow: 3px 5px 15px 2px #c4bfbf;
     width: 70vw;
-    padding: 7px 10px;
-    background-color: #e7e3e3
+    padding: 15px 0px;
+    background-color: #ebe6e6
 }
 
 .deleteBtn {
@@ -80,6 +84,10 @@ body {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
     cursor: pointer;
+}
+
+.mypost-margin{
+    margin-top: 100px;
 }
 
 .closeEye:hover {
