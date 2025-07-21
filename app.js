@@ -250,10 +250,13 @@ const postBtn = document.getElementById("postBtn")
 
 postBtn && postBtn.addEventListener("click", async () => {
     const { data: { user } } = await client.auth.getUser()
-    const userTitle = document.getElementById("website-admin").value
-    const userDescription = document.getElementById("message").value
+    const userTitle = document.getElementById("website-admin").value.trim()
+    const userDescription = document.getElementById("message").value.trim()
+    console.log(userTitle);
+    console.log(userDescription);
+    
 
-    if (!userTitle && !userDescription) {
+    if (!userTitle || !userDescription) {
         Swal.fire({
             icon: "error",
             title: "",
@@ -320,7 +323,7 @@ postBtn && postBtn.addEventListener("click", async () => {
 
 // Read all posts
 
-if (window.location.pathname == "/myposts.html") {
+if (window.location.pathname == "/allPosts.html") {
     console.log("mypost");
 
 
@@ -335,18 +338,18 @@ if (window.location.pathname == "/myposts.html") {
                 const postBox = document.getElementById("postBox")
                 console.log(postBox)
                 postBox.innerHTML = data.map(
-                    ({ id, title, description }) => `<div id = '${id}' class = 'mypost-margin'> 
+                    ({ id, title, description }) => `<div id = '${id}' class = 'flex flex-col items-center'> 
                 <div class="max-w-sm rounded overflow-hidden shadow-lg poststyling removeDiv">
                 
                  <div class="relative inline-block text-left">
-               <button id="menuButton" type="button" class="p-2 rounded-full hover:bg-gray-200 focus:outline-none">
+               <button type="button" class="menuButton p-2 rounded-full hover:bg-gray-200 focus:outline-none">
                <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
         <path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
       </svg>
                </button>
 
-              <div id="menuDropdown" class="hidden relative right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-              <div class="py-1 text-sm text-gray-700">
+              <div class="menuDropdown hidden relative right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+              <div class="py-1 text-sm text-gray-700 menu">
               <button class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
              <button class=" dlteBtn block w-full text-left px-4 py-2 hover:bg-gray-100">Delete</button>
     </div>
@@ -364,15 +367,18 @@ if (window.location.pathname == "/myposts.html") {
 
  ).join('')
  
- const menuButton = document.getElementById("menuButton")
-    console.log(menuButton);
-    menuButton && menuButton.addEventListener("click", () => {
-        const menuDropdown = document.getElementById("menuDropdown")
-        console.log(menuDropdown);
-        menuDropdown.classList.toggle("hidden")
-        const dlteBtn = document.getElementsByClassName("dlteBtn")
-        for(let i = 0; i < dlteBtn.length; i++){
-            dlteBtn[i].addEventListener("click", () => {
+ const menuButton = document.querySelectorAll(".menuButton")
+ console.log(menuButton);
+ 
+ menuButton.forEach((btn) => {
+     btn.addEventListener("click", () => {
+         const dropDown = btn.closest(".relative").querySelector(".menuDropdown")
+         dropDown.classList.toggle("hidden")
+        })
+        })
+         const dlteBtn = document.querySelectorAll(".dlteBtn")
+         dlteBtn.forEach((btn) => {
+            btn.addEventListener("click", () => {
                 Swal.fire({
                     title: "Are you sure?",
                     text: "You want to Delete this post!",
@@ -388,22 +394,107 @@ if (window.location.pathname == "/myposts.html") {
                             text: "Your Post has been deleted.",
                             icon: "success"
                         });
-                        dlteBtn[i].closest(".removeDiv").remove();
+                        btn.closest(".removeDiv").remove();
                     }
-                });
             })
-
-        }
-    })
+         })
+         })
             } else {
                 console.log(error);
-
             }
-        }
+            }
         readAllPosts()
     }
     catch (error) {
         console.log(error);
-    }
-    
+    }   
 }
+
+// Read My posts
+if(window.location.pathname == "/myposts.html"){
+
+
+const readMyPosts = async () => {
+    const {
+        data : {user},
+    } = await client.auth.getUser();
+    const {data, error} = await client.from("posts").select().eq('userId', user.id)
+    console.log(data);
+    console.log(data[0]);
+    
+    if(data){
+        const myBox = document.getElementById("container")
+        console.log(myBox);
+        myBox.innerHTML = data.map(
+             ({ id, title, description }) => `<div id = '${id}' class = 'flex flex-col items-center'> 
+                <div class="max-w-sm rounded overflow-hidden shadow-lg poststyling removeDiv">
+                
+                 <div class="relative inline-block text-left">
+               <button type="button" class="menuButton p-2 rounded-full hover:bg-gray-200 focus:outline-none">
+               <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+      </svg>
+               </button>
+
+              <div class="menuDropdown hidden relative right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+              <div class="py-1 text-sm text-gray-700 menu">
+              <button class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
+             <button class=" dlteBtn block w-full text-left px-4 py-2 hover:bg-gray-100">Delete</button>
+    </div>
+  </div>
+  </div>
+                <div class="px-6 py-4">
+                <div class="font-bold text-xl mb-2">${title}</div>
+                <p class="text-gray-700 text-base">${description}
+                </p>
+                </div>
+                <div class="px-6 pt-4 pb-2">
+                <img class="w-full" src="" alt="">
+                </div>
+</div>`
+
+ ).join('')
+ 
+ const menuButton = document.querySelectorAll(".menuButton")
+ console.log(menuButton);
+ 
+ menuButton.forEach((btn) => {
+     btn.addEventListener("click", () => {
+         const dropDown = btn.closest(".relative").querySelector(".menuDropdown")
+         dropDown.classList.toggle("hidden")
+        })
+        })
+         const dlteBtn = document.querySelectorAll(".dlteBtn")
+         dlteBtn.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You want to Delete this post!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your Post has been deleted.",
+                            icon: "success"
+                        });
+                        btn.closest(".removeDiv").remove();
+                    }
+            })
+         })
+         })
+            } else {
+                console.log(error);
+            }
+            }
+      try {
+		readMyPosts();
+	} catch (error) {
+		console.log(error);
+	}
+    
+        }

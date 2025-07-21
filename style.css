@@ -54,6 +54,14 @@ body {
     margin-bottom: 10px;
 }
 
+#postBox, #container{
+    margin-top: 100px;
+}
+
+.menu{
+border: none !important;
+    color: blue;
+}
 .poststyling {
     margin-bottom: 50px;
     border: none;
@@ -62,16 +70,6 @@ body {
     width: 70vw;
     padding: 15px 0px;
     background-color: #ebe6e6
-}
-
-.deleteBtn {
-    outline: none;
-    padding: 5px 15px;
-    background-color: #050f28;
-    color: white;
-    border-radius: 10px;
-    box-shadow: 1px 1px 8px 2px #222121;
-    margin-bottom: 5px;
 }
 
 .pswrd {
@@ -86,10 +84,6 @@ body {
     cursor: pointer;
 }
 
-.mypost-margin{
-    margin-top: 100px;
-}
-
 .closeEye:hover {
     background-color: #41444d;
 }
@@ -98,6 +92,7 @@ body {
     border-top-right-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
 }
+
 
 /* Media Queries */
 @media screen and (max-width: 500px) {
