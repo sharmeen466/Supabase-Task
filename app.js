@@ -145,7 +145,7 @@ loginBtn && loginBtn.addEventListener("click", async function () {
                 });
                 // navigate to home page
                 setTimeout(() => {
-                    window.location.href = "home.html"
+                    window.location.href = "./home.html"
                 }, 2000);
             }
         }
@@ -164,7 +164,7 @@ loginWithGoogle &&
         const { error } = await client.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin + '/home.html',
+                redirectTo: window.location.origin + './home.html',
                 queryParams: { access_type: 'offline', prompt: 'consent' },
             },
         })
@@ -340,19 +340,7 @@ if (window.location.pathname == "/allPosts.html") {
                     ({ id, title, description }) => `
                     <div id='${id}' class='flex flex-col items-center'>
                         <div class="max-w-sm rounded overflow-hidden shadow-lg poststyling removeDiv">
-                            <div class="relative inline-block text-left">
-                                <button type="button" class="menuButton p-2 rounded-full hover:bg-gray-200 focus:outline-none">
-                                    <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 6a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm0 3.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
-                                    </svg>
-                                </button>
-                                <div class="menuDropdown hidden relative right-0 z-10 mt-2 w-36 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
-                                    <div class="py-1 text-sm text-gray-700 menu">
-                                        <button class="block w-full text-left px-4 py-2 hover:bg-gray-100">Edit</button>
-                                        <button class="dlteBtn block w-full text-left px-4 py-2 hover:bg-gray-100" data-id="${id}">Delete</button>
-                                    </div>
-                                </div>
-                            </div>
+                            
                             <div class="px-6 py-4">
                                 <div class="font-bold text-xl mb-2">${title}</div>
                                 <p class="text-gray-700 text-base">${description}</p>
@@ -364,45 +352,6 @@ if (window.location.pathname == "/allPosts.html") {
                     </div>
                     `
                 ).join('');
-
-                // Toggle dropdown
-                const menuButton = document.querySelectorAll(".menuButton");
-                menuButton.forEach((btn) => {
-                    btn.addEventListener("click", () => {
-                        const dropDown = btn.closest(".relative").querySelector(".menuDropdown");
-                        dropDown.classList.toggle("hidden");
-                    });
-                });
-
-                // Delete logic
-                const dlteBtn = document.querySelectorAll(".dlteBtn");
-                dlteBtn.forEach((btn) => {
-                    btn.addEventListener("click", async () => {
-                        const postId = btn.getAttribute("data-id").trim();
-                        Swal.fire({
-                            title: "Are you sure?",
-                            text: "You want to Delete this post!",
-                            icon: "warning",
-                            showCancelButton: true,
-                            confirmButtonColor: "#3085d6",
-                            cancelButtonColor: "#d33",
-                            confirmButtonText: "Yes, delete it!"
-                        }).then(async (result) => {
-                            if (result.isConfirmed) {
-                                const { error: deleteError } = await client.from('posts').delete().eq('id', postId).select();
-                               
-                                if (!deleteError) {
-                                    Swal.fire("Deleted!", "Your Post has been deleted.", "success");
-                                    btn.closest(".removeDiv").remove();
-                                } else {
-                                    console.error("Delete failed:", deleteError);
-                                    Swal.fire("Error!", "Failed to delete post.", "error");
-                                }
-                            }
-                        });
-                    });
-                });
-
             }
 
         } catch (error) {
