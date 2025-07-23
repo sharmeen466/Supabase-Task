@@ -145,7 +145,7 @@ loginBtn && loginBtn.addEventListener("click", async function () {
                 });
                 // navigate to home page
                 setTimeout(() => {
-                    window.location.href = "./home.html"
+                    window.location.href = "home.html"
                 }, 2000);
             }
         }
@@ -164,7 +164,7 @@ loginWithGoogle &&
         const { error } = await client.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin + './home.html',
+                redirectTo: window.location.origin + '/home.html',
                 queryParams: { access_type: 'offline', prompt: 'consent' },
             },
         })
