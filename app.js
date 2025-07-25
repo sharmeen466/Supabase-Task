@@ -200,7 +200,8 @@ loginWithGoogle &&
         const { error } = await client.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.href + "https://sharmeen466.github.io/Supabase-Task/index.html",
+                redirectTo: "https://sharmeen466.github.io/Supabase-Task/index.html",
+
                 queryParams: { access_type: 'offline', prompt: 'consent' },
             },
         })
