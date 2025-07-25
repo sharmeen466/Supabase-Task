@@ -199,8 +199,8 @@ loginWithGoogle &&
     loginWithGoogle.addEventListener("click", async () => {
         try {
             const redirectTo = window.location.hostname === '127.0.0.1'
-                ? window.location.origin + 'home.html'
-                : window.location.origin + 'Supabase-Task'
+                ? window.location.origin + '/home.html'
+                : window.location.origin + '/Supabase-Task'
 
             const { error } = await client.auth.signInWithOAuth({
                 provider: 'google',
