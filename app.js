@@ -3,6 +3,7 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const { createClient } = supabase
 const client = createClient(supabaseUrl, supabaseKey)
+console.log(client);
 
 // Sign Up 
 
@@ -12,15 +13,41 @@ const signUpPassword = document.getElementById("password")
 const firstName = document.getElementById("fName")
 const lastName = document.getElementById("lName")
 const terms = document.getElementById("terms")
+const profilePic = document.getElementById("profile-pic")
 
+const passVisible = () => {
+    const closeEye = document.getElementById("closeEye")
+    closeEye && closeEye.addEventListener("click", () => {
+        if (signUpPassword.type === "password") {
+            signUpPassword.type = "text";
+            closeEye.classList.remove("fa-eye-slash");
+            closeEye.classList.add("fa-eye");
+        } else {
+            signUpPassword.type = "password";
+            closeEye.classList.remove("fa-eye");
+            closeEye.classList.add("fa-eye-slash");
+        }
+    })
+}
+passVisible()
 
 signUpBtn && signUpBtn.addEventListener("click", async function () {
-    if (!signUpEmail.value && !signUpPassword.value && !firstName.value && !lastName.value && !terms.checked) {
+
+   const {
+			data: {user},
+		} = await client.auth.getUser();
+		console.log(user);
+		const fileEx = profilePic.files[0].name.split('.')[1];
+
+		console.log(fileEx);
+    
+    if (!signUpEmail.value && !signUpPassword.value && !firstName.value || !lastName.value && !terms.checked && ! profilePic.files[0]) {
         Swal.fire({
             position: "top",
             icon: "error",
             text: "Please fill all the Fields",
         });
+        return;
     }
     else {
         if (!signUpEmail.value.includes("@gmail.com")) {
@@ -29,6 +56,7 @@ signUpBtn && signUpBtn.addEventListener("click", async function () {
                 position: "top",
                 text: "'@gmail.com' is missing",
             });
+            return;
         }
 
         else {
@@ -37,6 +65,7 @@ signUpBtn && signUpBtn.addEventListener("click", async function () {
         }
         if (!signUpPassword.value) {
             signUpPassword.classList.add("error")
+            return;
         }
         else {
             signUpPassword.classList.remove("error")
@@ -44,70 +73,77 @@ signUpBtn && signUpBtn.addEventListener("click", async function () {
         }
         if (!firstName.value) {
             firstName.classList.add("error")
+            return;
         }
         else {
             firstName.classList.remove("error")
         }
         if (!lastName.value) {
             lastName.classList.add("error")
+            return;
         }
         else {
             lastName.classList.remove("error")
+            
+        }
+        if (!profilePic.files[0]) {
+            profilePic.classList.add("error")
+            return;
+        }
+        else {
+            profilePic.classList.remove("error")
         }
         if (!terms.checked) {
             Swal.fire({
                 position: "top",
                 text: "Please Accept our T&C",
             });
+            return;
         }
-
     }
-
-    if (signUpEmail.value && signUpPassword.value && firstName.value && lastName.value && terms.checked) {
-
-        try {
-            const { data, error } = await client.auth.signUp({
+    if (signUpEmail && signUpPassword) {
+        try{
+            const { data: {user} , error } = await client.auth.signUp({
                 email: signUpEmail.value,
                 password: signUpPassword.value
             })
-            if (error) {
-                console.log(error.message)
+            console.log(data)
+            if(user){
+                console.log(user);
+                const {data: profileURL, error} = await client.storage.from("users").upload(`avators/users-${user.id}`, profilePic.files[0], {
+                    upsert: true
+                })
+                if(error){
+                    console.log(error);
+                }
+                else{
+                    console.log("upload data:", profileURL);
+                    
+                }
             }
-            else {
-                console.log(data)
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Successfully created your account",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-            }
-            // navigate to login page
-            setTimeout(() => {
-                window.location.href = "login.html"
-            }, 2000);
         }
-
-        catch (error) {
-            console.log(error.message);
+        catch(error){
+            console.error(error);
+            
         }
+    }
+        // Swal.fire({
+        //     position: "top-end",
+        //     icon: "success",
+        //     title: "Successfully created your account",
+        //     showConfirmButton: false,
+        //     timer: 1500
+        // });
+        //  navigate to login page
+                // setTimeout(() => {
+                    // window.location.href = "login.html"
+                // }, 2000);
+    else{
+        console.log(error);
+        
     }
 })
 
-
-const closeEye = document.getElementById("closeEye")
-closeEye && closeEye.addEventListener("click", () => {
-    if (signUpPassword.type === "password") {
-        signUpPassword.type = "text";
-        closeEye.classList.remove("fa-eye-slash");
-        closeEye.classList.add("fa-eye");
-    } else {
-        signUpPassword.type = "password";
-        closeEye.classList.remove("fa-eye");
-        closeEye.classList.add("fa-eye-slash");
-    }
-})
 
 // Log in
 
@@ -123,7 +159,7 @@ loginBtn && loginBtn.addEventListener("click", async function () {
                 email: loginEmail.value,
                 password: loginPass.value
             })
-            console.log(data);
+
 
             if (error) {
                 console.log(error.message)
@@ -191,57 +227,54 @@ logOutBtn && logOutBtn.addEventListener("click", async () => {
 
 // create user in navbar
 
-async function displayUserProfile() {
-    try {
-        const {
-            data: { user },
-            error,
-        } = await client.auth.getUser();
+// async function displayUserProfile() {
+//     try {
+//         const {
+//             data: { user },
+//             error,
+//         } = await client.auth.getUser();
 
-        if (error) throw error;
+//         if (error) throw error;
 
-        console.log(user);
+//         console.log(user);
 
-        if (user) {
-            // 👇 get DOM elements first
-            const profileAvatar = document.getElementById('profile-avatar');
-            const fullName = document.getElementById('profile-name');
-            const emailElement = document.getElementById('profile-email');
-            // 👇 update values if elements exist
-            if (profileAvatar) {
-                profileAvatar.src =
-                    user.user_metadata?.avatar_url || 'blank-profile-picture-973460_960_720.webp';
-            }
+//         if (user) {
+//             // 👇 get DOM elements first
+//             const profileAvatar = document.getElementById('profile-avatar');
+//             const fullName = document.getElementById('profile-name');
+//             const emailElement = document.getElementById('profile-email');
+//             // 👇 update values if elements exist
+//             if (profileAvatar) {
+//                 profileAvatar.src =
+//                     user.user_metadata?.avatar_url || 'blank-profile-picture-973460_960_720.webp';
+//             }
 
-            if (fullName) {
-                fullName.textContent = user.user_metadata?.full_name;
-            }
+//             if (fullName) {
+//                 fullName.textContent = user.user_metadata?.full_name;
+//             }
 
-            if (emailElement) {
-                emailElement.textContent = user.email || '';
-            }
+//             if (emailElement) {
+//                 emailElement.textContent = user.email || '';
+//             }
 
             // 👇 Redirect to post.html if logged in and on index.html
-            if (window.location.pathname.includes('index.html')) {
-                window.location.href = 'home.html';
-            }
-        } else if (
-            !window.location.pathname.includes('index.html') &&
-            !window.location.pathname.includes('login.html')
-        ) {
-            window.location.href = 'index.html';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        if (
-            !window.location.pathname.includes('index.html') &&
-            !window.location.pathname.includes('login.html')
-        ) {
-            window.location.href = 'index.html';
-        }
-    }
-}
-displayUserProfile()
+//             if (window.location.pathname.includes('index.html')) {
+//                 window.location.href = 'home.html';
+//             }
+//         } else if (!window.location.pathname.includes('index.html') && !window.location.pathname.includes('login.html')) {
+//             window.location.href = 'index.html';
+//         }
+//     } catch (error) {
+//         console.error('Error:', error);
+//         if (
+//             !window.location.pathname.includes('index.html') &&
+//             !window.location.pathname.includes('login.html')
+//         ) {
+//             window.location.href = 'index.html';
+//         }
+//     }
+// }
+// displayUserProfile()
 
 //Add a post
 
