@@ -197,17 +197,25 @@ loginBtn && loginBtn.addEventListener("click", async function () {
 const loginWithGoogle = document.getElementById("signupWithGoogle")
 loginWithGoogle &&
     loginWithGoogle.addEventListener("click", async () => {
-        const { error } = await client.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-                redirectTo: "https://sharmeen466.github.io/Supabase-Task/index.html",
+        try {
+            const redirectTo = window.location.hostname === '127.0.0.1'
+                ? window.location.origin + 'home.html'
+                : window.location.origin + 'Supabase-Task'
 
-                queryParams: { access_type: 'offline', prompt: 'consent' },
-            },
-        })
-        console.log(error)
+            const { error } = await client.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: redirectTo,
+                    queryParams: { access_type: 'offline', prompt: 'consent' },
+                },
+            })
+            if (error) throw error
+        }
+        catch (error) {
+            console.log("Google login error "+error);
+
+        }
     })
-
 
 // navigate to Login Page
 
