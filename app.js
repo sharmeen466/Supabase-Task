@@ -33,15 +33,15 @@ passVisible()
 
 signUpBtn && signUpBtn.addEventListener("click", async function () {
 
-   const {
-			data: {user},
-		} = await client.auth.getUser();
-		console.log(user);
-		const fileEx = profilePic.files[0].name.split('.')[1];
+    const {
+        data: { user },
+    } = await client.auth.getUser();
+    console.log(user);
+    const fileEx = profilePic.files[0].name.split('.')[1];
 
-		console.log(fileEx);
-    
-    if (!signUpEmail.value && !signUpPassword.value && !firstName.value || !lastName.value && !terms.checked && ! profilePic.files[0]) {
+    console.log(fileEx);
+
+    if (!signUpEmail.value && !signUpPassword.value && !firstName.value || !lastName.value && !terms.checked && !profilePic.files[0]) {
         Swal.fire({
             position: "top",
             icon: "error",
@@ -84,7 +84,7 @@ signUpBtn && signUpBtn.addEventListener("click", async function () {
         }
         else {
             lastName.classList.remove("error")
-            
+
         }
         if (!profilePic.files[0]) {
             profilePic.classList.add("error")
@@ -102,45 +102,45 @@ signUpBtn && signUpBtn.addEventListener("click", async function () {
         }
     }
     if (signUpEmail && signUpPassword) {
-        try{
-            const { data: {user} , error } = await client.auth.signUp({
+        try {
+            const { data: { user }, error } = await client.auth.signUp({
                 email: signUpEmail.value,
                 password: signUpPassword.value
             })
             console.log(data)
-            if(user){
+            if (user) {
                 console.log(user);
-                const {data: profileURL, error} = await client.storage.from("users").upload(`avators/users-${user.id}`, profilePic.files[0], {
+                const { data: profileURL, error } = await client.storage.from("users").upload(`avators/users-${user.id}`, profilePic.files[0], {
                     upsert: true
                 })
-                if(error){
+                if (error) {
                     console.log(error);
                 }
-                else{
+                else {
                     console.log("upload data:", profileURL);
-                    
+
                 }
             }
         }
-        catch(error){
+        catch (error) {
             console.error(error);
-            
+
         }
     }
-        // Swal.fire({
-        //     position: "top-end",
-        //     icon: "success",
-        //     title: "Successfully created your account",
-        //     showConfirmButton: false,
-        //     timer: 1500
-        // });
-        //  navigate to login page
-                // setTimeout(() => {
-                    // window.location.href = "login.html"
-                // }, 2000);
-    else{
+    // Swal.fire({
+    //     position: "top-end",
+    //     icon: "success",
+    //     title: "Successfully created your account",
+    //     showConfirmButton: false,
+    //     timer: 1500
+    // });
+    //  navigate to login page
+    // setTimeout(() => {
+    // window.location.href = "login.html"
+    // }, 2000);
+    else {
         console.log(error);
-        
+
     }
 })
 
@@ -200,9 +200,7 @@ loginWithGoogle &&
         const { error } = await client.auth.signInWithOAuth({
             provider: 'google',
             options: {
-               redirectTo: window.location.href + '/Supabase-Task/index.html',
-
-
+                redirectTo: window.location.href + "https://sharmeen466.github.io/Supabase-Task/index.html",
                 queryParams: { access_type: 'offline', prompt: 'consent' },
             },
         })
@@ -259,7 +257,7 @@ logOutBtn && logOutBtn.addEventListener("click", async () => {
 //                 emailElement.textContent = user.email || '';
 //             }
 
-            // 👇 Redirect to post.html if logged in and on index.html
+// 👇 Redirect to post.html if logged in and on index.html
 //             if (window.location.pathname.includes('index.html')) {
 //                 window.location.href = 'home.html';
 //             }
